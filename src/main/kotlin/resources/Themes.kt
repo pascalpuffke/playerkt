@@ -60,16 +60,16 @@ enum class Theme(val colors: Colors, val backgroundContrast: Color, val textCont
                primaryVariant = Color(0xFFFFDFB3), // syntax.special
                secondary = Color(0xFF73D0FF), // syntax.entity
                secondaryVariant = Color(0xFF95E6CB), // syntax.regexp
-               background = Color(0xFF1A1F29), // editor.line
-               surface = Color(0xFF1A1F29), // editor.line
+               background = Color(0xFF1F2430), // editor.line
+               surface = Color(0xFF1F2430), // editor.line
                error = Color(0xFFFF6666), // common.error
-               onPrimary = Color(0xFF1A1F29), // editor.line
-               onSecondary = Color(0xFF1A1F29), // editor.line
+               onPrimary = Color(0xFF1F2430), // editor.line
+               onSecondary = Color(0xFF1F2430), // editor.line
                onBackground = Color(0xFFCCCAC2), // editor.fg
                onSurface = Color(0xFFCCCAC2), // editor.fg
-               onError = Color(0xFF1A1F29), // editor.line
+               onError = Color(0xFF1F2430), // editor.line
                isLight = false),
-        backgroundContrast = Color(0xFF1F2430), // ui.bg
+        backgroundContrast = Color(0xFF1A1F29), // ui.bg
         textContrast = Color(0xFF707A8C), // ui.fg
     ),
     AyuLight(
