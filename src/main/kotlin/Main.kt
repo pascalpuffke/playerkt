@@ -27,6 +27,7 @@ import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.tag.FieldKey
 import resources.*
 import utils.Track
+import utils.withDebugBorder
 import java.nio.file.FileVisitOption
 import java.nio.file.Files
 import java.nio.file.Path
@@ -75,7 +76,7 @@ fun App(states: States) {
 
     MaterialTheme(states.theme.value.colors, Fonts.fonts) {
         Surface(Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.border(states.borderStroke.value),
+            Column(modifier = Modifier.withDebugBorder(states),
                    horizontalAlignment = Alignment.CenterHorizontally,
                    verticalArrangement = Arrangement.SpaceBetween) {
                 Box {

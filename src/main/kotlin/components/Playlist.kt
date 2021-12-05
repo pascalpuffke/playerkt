@@ -17,13 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import resources.States
+import utils.withDebugBorder
 
 @Composable
 @Preview
 fun Playlist(
     modifier: Modifier = Modifier, states: States,
 ) {
-    Box(modifier.fillMaxWidth().border(states.borderStroke.value)) {
+    Box(modifier.fillMaxWidth().withDebugBorder(states)) {
         val lazyListState = rememberLazyListState()
 
         LazyColumn(
@@ -36,14 +37,14 @@ fun Playlist(
 
                     states.songPosition.value = 0
                     states.currentTrack.value = track
-                }.padding(10.dp).border(states.borderStroke.value)) {
+                }.padding(10.dp).withDebugBorder(states)) {
                     PlaylistEntry(track = track, states = states)
                 }
             }
         }
 
         VerticalScrollbar(
-            modifier = Modifier.align(Alignment.CenterEnd).border(states.borderStroke.value),
+            modifier = Modifier.align(Alignment.CenterEnd).withDebugBorder(states),
             adapter = rememberScrollbarAdapter(lazyListState)
         )
     }

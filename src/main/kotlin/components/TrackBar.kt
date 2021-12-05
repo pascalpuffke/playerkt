@@ -1,6 +1,9 @@
 package components
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.TooltipArea
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -19,6 +22,7 @@ import resources.States
 import resources.albumCover
 import resources.player
 import utils.songPosToString
+import utils.withDebugBorder
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -28,8 +32,8 @@ fun TrackBar(
     states: States,
 ) {
     Surface(color = states.theme.value.backgroundContrast, modifier = modifier) {
-        Row(Modifier.border(states.borderStroke.value)) {
-            Column(Modifier.border(states.borderStroke.value)) {
+        Row(Modifier.withDebugBorder(states)) {
+            Column(Modifier.withDebugBorder(states)) {
                 Image(
                     bitmap = albumCover,
                     contentDescription = null,
@@ -38,9 +42,9 @@ fun TrackBar(
 
             Column(modifier = Modifier.background(Brush.horizontalGradient(0.0f to states.theme.value.backgroundContrast,
                                                                            1.0f to states.theme.value.background))
-                .fillMaxSize().padding(10.dp).border(states.borderStroke.value),
+                .fillMaxSize().padding(10.dp).withDebugBorder(states),
                    verticalArrangement = Arrangement.SpaceBetween) {
-                Column(Modifier.fillMaxHeight(.33f).border(states.borderStroke.value)) {
+                Column(Modifier.fillMaxHeight(.33f).withDebugBorder(states)) {
                     if (states.currentTrack.value != null) {
                         Row {
                             Text(states.currentTrack.value!!.title, overflow = TextOverflow.Ellipsis, maxLines = 1)
@@ -68,7 +72,7 @@ fun TrackBar(
                 //Row {
                 Box {
                     Column(
-                        modifier = Modifier.fillMaxWidth(.2f).border(states.borderStroke.value),
+                        modifier = Modifier.fillMaxWidth(.2f).withDebugBorder(states),
                     ) {
                         Row(modifier = Modifier.padding(horizontal = 5.dp),
                             verticalAlignment = Alignment.CenterVertically,
@@ -85,24 +89,24 @@ fun TrackBar(
                                     horizontalArrangement = Arrangement.Center) {
                                     Icon(imageVector = if (states.volume.value < .5f) Icons.White.volumeLow else Icons.White.volumeHigh,
                                          contentDescription = null,
-                                         modifier = Modifier.border(states.borderStroke.value))
+                                         modifier = Modifier.withDebugBorder(states))
                                     Slider(value = states.volume.value,
                                            valueRange = 0.0f..1.0f,
                                            onValueChange = {
                                                states.volume.value = it
                                            },
                                            modifier = Modifier.offset(x = 24.dp).fillMaxWidth()
-                                               .border(states.borderStroke.value),
+                                               .withDebugBorder(states),
                                            colors = SliderDefaults.colors(thumbColor = states.theme.value.textContrast))
                                 }
                             }
                         }
                     }
-                    Column(modifier = Modifier.fillMaxWidth().border(states.borderStroke.value),
+                    Column(modifier = Modifier.fillMaxWidth().withDebugBorder(states),
                            verticalArrangement = Arrangement.Center,
                            horizontalAlignment = Alignment.CenterHorizontally) {
                         Row(
-                            modifier = Modifier.padding(5.dp).fillMaxHeight(.55f).border(states.borderStroke.value),
+                            modifier = Modifier.padding(5.dp).fillMaxHeight(.55f).withDebugBorder(states),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             IconButton(icon = Icons.White.shuffle,
@@ -156,7 +160,7 @@ fun TrackBar(
                 }
                 //}
 
-                Row(modifier = Modifier.fillMaxWidth().border(states.borderStroke.value),
+                Row(modifier = Modifier.fillMaxWidth().withDebugBorder(states),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(songPosToString(states.songPosition.value),
@@ -169,7 +173,7 @@ fun TrackBar(
                                valueRange = 0.0f..0.0f,
                                onValueChange = {},
                                colors = SliderDefaults.colors(thumbColor = states.theme.value.textContrast),
-                               modifier = Modifier.fillMaxWidth(.875f).border(states.borderStroke.value),
+                               modifier = Modifier.fillMaxWidth(.875f).withDebugBorder(states),
                                enabled = false)
                     } else {
                         Slider(value = states.songPosition.value.toFloat(),
@@ -178,7 +182,7 @@ fun TrackBar(
                                    states.songPosition.value = it.toInt()
                                },
                                colors = SliderDefaults.colors(thumbColor = states.theme.value.textContrast),
-                               modifier = Modifier.fillMaxWidth(.875f).border(states.borderStroke.value))
+                               modifier = Modifier.fillMaxWidth(.875f).withDebugBorder(states))
                     }
                     Spacer(Modifier.padding(4.dp))
                     Text(songPosToString(states.currentTrack.value?.duration ?: 0),
