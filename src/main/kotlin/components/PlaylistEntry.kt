@@ -23,27 +23,39 @@ fun PlaylistEntry(
         Row(modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start) {
+            val color = if (states.currentTrack.value == track) {
+                states.theme.value.primaryVariant
+            } else {
+                states.theme.value.onSurface
+            }
+
             Column(modifier = Modifier.fillMaxWidth(.33f).withDebugBorder(states)) {
                 Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                     Column(modifier = Modifier.withDebugBorder(states)) {
-                        Icon(imageVector = Icons.White.musicNote, contentDescription = null)
+                        Icon(imageVector = Icons.White.musicNote, tint = color, contentDescription = null)
                     }
                     Spacer(Modifier.width(8.dp))
                     Column(modifier = Modifier.fillMaxWidth().withDebugBorder(states)) {
-                        Text(text = track.title, overflow = TextOverflow.Ellipsis, maxLines = 1)
+                        Text(text = track.title, color = color, overflow = TextOverflow.Ellipsis, maxLines = 1)
                     }
                 }
             }
 
             Column(modifier = Modifier.fillMaxWidth(.33f).withDebugBorder(states)) {
                 Row {
-                    Text(text = track.artist ?: "Unknown artist", overflow = TextOverflow.Ellipsis, maxLines = 1)
+                    Text(text = track.artist ?: "Unknown artist",
+                         color = color,
+                         overflow = TextOverflow.Ellipsis,
+                         maxLines = 1)
                 }
             }
 
             Column(modifier = Modifier.fillMaxWidth().withDebugBorder(states)) {
                 Row {
-                    Text(text = track.album ?: "Unknown album", overflow = TextOverflow.Ellipsis, maxLines = 1)
+                    Text(text = track.album ?: "Unknown album",
+                         color = color,
+                         overflow = TextOverflow.Ellipsis,
+                         maxLines = 1)
                 }
             }
         }
