@@ -1,0 +1,192 @@
+package components
+
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import resources.Icons
+import resources.States
+import resources.albumCover
+import resources.player
+import utils.songPosToString
+import kotlin.math.roundToInt
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TrackBar(
+    modifier: Modifier = Modifier,
+    states: States,
+) {
+    Surface(color = states.theme.value.backgroundContrast, modifier = modifier) {
+        Row(Modifier.border(states.borderStroke.value)) {
+            Column(Modifier.border(states.borderStroke.value)) {
+                Image(
+                    bitmap = albumCover,
+                    contentDescription = null,
+                )
+            }
+
+            Column(modifier = Modifier.background(Brush.horizontalGradient(0.0f to states.theme.value.backgroundContrast,
+                                                                           1.0f to states.theme.value.background))
+                .fillMaxSize().padding(10.dp).border(states.borderStroke.value),
+                   verticalArrangement = Arrangement.SpaceBetween) {
+                Column(Modifier.fillMaxHeight(.33f).border(states.borderStroke.value)) {
+                    if (states.currentTrack.value != null) {
+                        Row {
+                            Text(states.currentTrack.value!!.title, overflow = TextOverflow.Ellipsis, maxLines = 1)
+                        }
+                        Row {
+                            Text(buildAnnotatedString {
+                                append(states.currentTrack.value!!.artist ?: "Unknown artist")
+                                withStyle(SpanStyle(states.theme.value.textContrast)) {
+                                    append(" - ")
+                                    append(states.currentTrack.value!!.album ?: "Unknown album")
+                                }
+                            }, overflow = TextOverflow.Ellipsis, maxLines = 1)
+                        }
+                    } else {
+                        Row {
+                            Text(buildAnnotatedString {
+                                withStyle(SpanStyle(states.theme.value.textContrast)) {
+                                    append("Nothing playing :(")
+                                }
+                            })
+                        }
+                    }
+                }
+
+                //Row {
+                Box {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(.2f).border(states.borderStroke.value),
+                    ) {
+                        Row(modifier = Modifier.padding(horizontal = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center) {
+                            TooltipArea(
+                                tooltip = {
+                                    Surface(Modifier.background(states.theme.value.background,
+                                                                RoundedCornerShape(10.dp))) {
+                                        Text("${(states.volume.value * 100).roundToInt()}%")
+                                    }
+                                },
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center) {
+                                    Icon(imageVector = if (states.volume.value < .5f) Icons.White.volumeLow else Icons.White.volumeHigh,
+                                         contentDescription = null,
+                                         modifier = Modifier.border(states.borderStroke.value))
+                                    Slider(value = states.volume.value,
+                                           valueRange = 0.0f..1.0f,
+                                           onValueChange = {
+                                               states.volume.value = it
+                                           },
+                                           modifier = Modifier.offset(x = 24.dp).fillMaxWidth()
+                                               .border(states.borderStroke.value),
+                                           colors = SliderDefaults.colors(thumbColor = states.theme.value.textContrast))
+                                }
+                            }
+                        }
+                    }
+                    Column(modifier = Modifier.fillMaxWidth().border(states.borderStroke.value),
+                           verticalArrangement = Arrangement.Center,
+                           horizontalAlignment = Alignment.CenterHorizontally) {
+                        Row(
+                            modifier = Modifier.padding(5.dp).fillMaxHeight(.55f).border(states.borderStroke.value),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            IconButton(icon = Icons.White.shuffle,
+                                       debugBorderStroke = states.borderStroke,
+                                       modifier = Modifier.fillMaxHeight(.75f),
+                                       iconPadding = 8.dp,
+                                       colors = ButtonDefaults.buttonColors(backgroundColor = if (states.shuffle.value) states.theme.value.primary else states.theme.value.backgroundContrast)) {
+                                states.shuffle.value = !states.shuffle.value
+                                player.toggleShuffle()
+                                assert(states.shuffle.value == player.shuffle)
+                            }
+                            Spacer(Modifier.width(20.dp))
+                            IconButton(icon = Icons.White.previous,
+                                       debugBorderStroke = states.borderStroke,
+                                       modifier = Modifier.fillMaxHeight(.9f),
+                                       iconPadding = 8.dp,
+                                       colors = ButtonDefaults.buttonColors(backgroundColor = states.theme.value.background)) {
+                                states.songPosition.value = 0
+                                player.previous()
+                            }
+                            Spacer(Modifier.width(10.dp))
+                            IconButton(
+                                icon = if (states.playing.value) Icons.White.pause else androidx.compose.material.icons.Icons.Default.PlayArrow,
+                                debugBorderStroke = states.borderStroke,
+                                //modifier = Modifier.shadow(10.dp, CircleShape)
+                            ) {
+                                states.playing.value = !states.playing.value
+                                player.pause()
+                            }
+                            Spacer(Modifier.width(10.dp))
+                            IconButton(icon = Icons.White.next,
+                                       debugBorderStroke = states.borderStroke,
+                                       modifier = Modifier.fillMaxHeight(.9f),
+                                       iconPadding = 8.dp,
+                                       colors = ButtonDefaults.buttonColors(backgroundColor = states.theme.value.background)) {
+                                states.songPosition.value = states.currentTrack.value?.duration ?: 0
+                                player.next()
+                            }
+                            Spacer(Modifier.width(20.dp))
+                            IconButton(icon = Icons.White.repeat,
+                                       debugBorderStroke = states.borderStroke,
+                                       modifier = Modifier.fillMaxHeight(.75f),
+                                       iconPadding = 8.dp,
+                                       colors = ButtonDefaults.buttonColors(backgroundColor = if (states.repeat.value) states.theme.value.primary else states.theme.value.backgroundContrast)) {
+                                states.repeat.value = !states.repeat.value
+                                player.toggleRepeat()
+                                assert(states.repeat.value == player.repeat)
+                            }
+                        }
+                    }
+                }
+                //}
+
+                Row(modifier = Modifier.fillMaxWidth().border(states.borderStroke.value),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(songPosToString(states.songPosition.value),
+                         color = states.theme.value.textContrast,
+                         overflow = TextOverflow.Ellipsis,
+                         maxLines = 1)
+                    Spacer(Modifier.padding(4.dp))
+                    if (states.currentTrack.value == null) {
+                        Slider(value = 0f,
+                               valueRange = 0.0f..0.0f,
+                               onValueChange = {},
+                               colors = SliderDefaults.colors(thumbColor = states.theme.value.textContrast),
+                               modifier = Modifier.fillMaxWidth(.875f).border(states.borderStroke.value),
+                               enabled = false)
+                    } else {
+                        Slider(value = states.songPosition.value.toFloat(),
+                               valueRange = 0.0f..states.currentTrack.value!!.duration.toFloat(),
+                               onValueChange = {
+                                   states.songPosition.value = it.toInt()
+                               },
+                               colors = SliderDefaults.colors(thumbColor = states.theme.value.textContrast),
+                               modifier = Modifier.fillMaxWidth(.875f).border(states.borderStroke.value))
+                    }
+                    Spacer(Modifier.padding(4.dp))
+                    Text(songPosToString(states.currentTrack.value?.duration ?: 0),
+                         color = states.theme.value.textContrast,
+                         overflow = TextOverflow.Ellipsis,
+                         maxLines = 1)
+                }
+            }
+        }
+    }
+}
