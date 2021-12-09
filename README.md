@@ -1,4 +1,7 @@
 # player
+
+[![wakatime](https://wakatime.com/badge/user/2daa8f37-2c87-4e44-b7c4-59929b234950/project/bdfea3f1-d2aa-4627-bb59-aa00e9a1003f.svg)](https://wakatime.com/badge/user/2daa8f37-2c87-4e44-b7c4-59929b234950/project/bdfea3f1-d2aa-4627-bb59-aa00e9a1003f)
+
 A currently non-functioning, cross-platform music player with a beautiful, if impractical interface.
 
 ![preview](preview.png)

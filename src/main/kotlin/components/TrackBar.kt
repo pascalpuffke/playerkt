@@ -19,7 +19,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import resources.Icons
 import resources.States
-import resources.albumCover
+import resources.defaultAlbumCover
 import resources.player
 import utils.songPosToString
 import utils.withDebugBorder
@@ -35,15 +35,14 @@ fun TrackBar(
         Row(Modifier.withDebugBorder(states)) {
             Column(Modifier.withDebugBorder(states)) {
                 Image(
-                    bitmap = albumCover,
+                    bitmap = states.currentTrack.value?.cover ?: defaultAlbumCover,
                     contentDescription = null,
                 )
             }
 
             Column(modifier = Modifier.background(Brush.horizontalGradient(0.0f to states.theme.value.backgroundContrast,
                                                                            1.0f to states.theme.value.background))
-                .fillMaxSize().padding(10.dp).withDebugBorder(states),
-                   verticalArrangement = Arrangement.SpaceBetween) {
+                .fillMaxSize().padding(10.dp).withDebugBorder(states), verticalArrangement = Arrangement.SpaceBetween) {
                 Column(Modifier.fillMaxHeight(.33f).withDebugBorder(states)) {
                     if (states.currentTrack.value != null) {
                         Row {
@@ -95,9 +94,9 @@ fun TrackBar(
                                            onValueChange = {
                                                states.volume.value = it
                                            },
-                                           modifier = Modifier.offset(x = 24.dp).fillMaxWidth()
-                                               .withDebugBorder(states),
-                                           colors = SliderDefaults.colors(thumbColor = states.theme.value.textContrast))
+                                           modifier = Modifier.offset(x = 24.dp).fillMaxWidth().withDebugBorder(states),
+                                           colors = SliderDefaults.colors(activeTrackColor = states.theme.value.secondary,
+                                                                          thumbColor = states.theme.value.textContrast))
                                 }
                             }
                         }

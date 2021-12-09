@@ -2,6 +2,7 @@ package resources
 
 import utils.loadAsImageVector
 
+// TODO: clean this up, this is a mess
 object Icons {
     object White {
         // Player control
@@ -17,6 +18,13 @@ object Icons {
 
         // Playlist
         val musicNote = "res/icon/white/outline_music_note_24.xml".loadAsImageVector()
+        val queue = "res/icon/white/outline_queue_music_24.xml".loadAsImageVector()
+
+        val expandLess = "res/icon/white/outline_expand_less_24.xml".loadAsImageVector()
+        val expandMore = "res/icon/white/outline_expand_more_24.xml".loadAsImageVector()
+
+        val checkedBox = "res/icon/white/outline_check_box_24.xml".loadAsImageVector()
+        val uncheckedBox = "res/icon/white/outline_check_box_outline_blank_24.xml".loadAsImageVector()
 
         // Menubar
         val settings = "res/icon/white/outline_settings_24.xml".loadAsImageVector()
@@ -27,6 +35,7 @@ object Icons {
         val palette = "res/icon/white/outline_palette_24.xml".loadAsImageVector()
         val darkMode = "res/icon/white/outline_dark_mode_24.xml".loadAsImageVector()
         val lightMode = "res/icon/white/outline_light_mode_24.xml".loadAsImageVector()
+        val feed = "res/icon/white/outline_feed_24.xml".loadAsImageVector()
     }
 
     object Black {
@@ -43,6 +52,13 @@ object Icons {
 
         // Playlist
         val musicNote = "res/icon/black/outline_music_note_24.xml".loadAsImageVector()
+        val queue = "res/icon/black/outline_queue_music_24.xml".loadAsImageVector()
+
+        val expandLess = "res/icon/black/outline_expand_less_24.xml".loadAsImageVector()
+        val expandMore = "res/icon/black/outline_expand_more_24.xml".loadAsImageVector()
+
+        val checkedBox = "res/icon/black/outline_check_box_24.xml".loadAsImageVector()
+        val uncheckedBox = "res/icon/black/outline_check_box_outline_blank_24.xml".loadAsImageVector()
 
         // Menubar
         val settings = "res/icon/black/outline_settings_24.xml".loadAsImageVector()
@@ -53,5 +69,6 @@ object Icons {
         val palette = "res/icon/black/outline_palette_24.xml".loadAsImageVector()
         val darkMode = "res/icon/black/outline_dark_mode_24.xml".loadAsImageVector()
         val lightMode = "res/icon/black/outline_light_mode_24.xml".loadAsImageVector()
+        val feed = "res/icon/black/outline_feed_24.xml".loadAsImageVector()
     }
 }

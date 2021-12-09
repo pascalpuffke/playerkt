@@ -1,5 +1,6 @@
 package utils
 
+import androidx.compose.ui.graphics.ImageBitmap
 import java.nio.file.Path
 
 data class Track(
@@ -14,5 +15,6 @@ data class Track(
     val sampleRate: Int,
     val bitrate: Long,
     val size: Long,
-    val file: Path,
+    val filePath: Path,
+    var cover: ImageBitmap? = null,
 )

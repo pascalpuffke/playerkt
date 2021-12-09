@@ -3,6 +3,7 @@ package resources
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import utils.LogMessage
 import utils.Track
 
 /**
@@ -12,12 +13,15 @@ import utils.Track
  */
 data class States(
     var library: SnapshotStateList<Track>,
+    var paths: SnapshotStateList<String>,
+    var messages: SnapshotStateList<LogMessage>,
     var currentTrack: MutableState<Track?>,
     val playing: MutableState<Boolean>,
     val shuffle: MutableState<Boolean>,
     val repeat: MutableState<Boolean>,
     val volume: MutableState<Float>,
     val theme: MutableState<Theme>,
+    val screen: MutableState<Screen>,
     val borderStroke: MutableState<BorderStroke>,
     var songPosition: MutableState<Int>,
 )

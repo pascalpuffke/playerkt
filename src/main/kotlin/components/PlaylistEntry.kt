@@ -21,8 +21,7 @@ fun PlaylistEntry(
 ) {
     Box(modifier.fillMaxWidth().withDebugBorder(states)) {
         Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start) {
+            verticalAlignment = Alignment.CenterVertically) {
             val color = if (states.currentTrack.value == track) {
                 states.theme.value.primaryVariant
             } else {

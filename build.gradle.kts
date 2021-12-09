@@ -28,10 +28,26 @@ tasks.withType<KotlinCompile> {
 compose.desktop {
     application {
         mainClass = "MainKt"
+        jvmArgs += "-ea"
+
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.AppImage)
-            packageName = "player"
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.AppImage, TargetFormat.Exe)
+            packageName = "playerkt"
             packageVersion = "1.0.0"
+
+            windows {
+                dirChooser = true
+            }
+
+            linux {
+                debMaintainer = "Pascal Puffke <pascal@pascalpuffke.de>"
+            }
+
+            macOS {
+                signing {
+                    // TODO
+                }
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -15,77 +14,47 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import components.Playlist
+import components.ControlBar
 import components.TrackBar
-import org.jaudiotagger.audio.AudioFileIO
-import org.jaudiotagger.tag.FieldKey
 import resources.*
-import utils.Track
+import screens.LibraryScreen
+import screens.LogMessagesScreen
+import screens.SettingsScreen
+import utils.rescanLibrary
+import utils.toggleBorders
 import utils.withDebugBorder
-import java.nio.file.FileVisitOption
-import java.nio.file.Files
-import java.nio.file.Path
-import java.util.logging.Level
-import java.util.logging.Logger
-
-fun scanLibrary(path: Path): List<Track>? {
-    if (Files.notExists(path)) return null
-
-    // Why isn't this the default? Their logger annihilates stdout.
-    Logger.getLogger("org.jaudiotagger").level = Level.OFF
-
-    val tracks = mutableListOf<Track>()
-
-    Files.walk(path, FileVisitOption.FOLLOW_LINKS).filter(Files::isRegularFile)
-        .filter { it.fileName.toString().split('.').last() in fileTypes }.forEach {
-            val file = it.toFile()
-            val audioFile = AudioFileIO.read(file)
-            val header = audioFile.audioHeader
-            val tag = audioFile.tag
-            val year = tag.getFirst(FieldKey.YEAR)
-
-            tracks.add(Track(title = tag.getFirst(FieldKey.TITLE) ?: "unknown",
-                             artist = tag.getFirst(FieldKey.ARTIST) ?: "unknown",
-                             album = tag.getFirst(FieldKey.ALBUM) ?: "unknown",
-                             genre = tag.getFirst(FieldKey.GENRE) ?: "unknown",
-                             year = if (year.contains('-')) year.split('-').first()
-                                 .toIntOrNull() else year.toIntOrNull(),
-                             track = tag.getFirst(FieldKey.TRACK).toIntOrNull(),
-                             duration = header.trackLength,
-                             bitDepth = header.bitsPerSample,
-                             sampleRate = header.sampleRateAsNumber,
-                             bitrate = header.bitRateAsNumber,
-                             size = file.length(),
-                             file = it))
-
-            println("Found track ${tracks.last()}")
-        }
-
-    return tracks.toList()
-}
+import java.awt.Dimension
 
 @Composable
 fun App(states: States) {
-    if (states.library.isEmpty()) states.library.addAll(scanLibrary(libraryPath) ?: emptyList())
-
     MaterialTheme(states.theme.value.colors, Fonts.fonts) {
         Surface(Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.withDebugBorder(states),
-                   horizontalAlignment = Alignment.CenterHorizontally,
-                   verticalArrangement = Arrangement.SpaceBetween) {
+            // A Scaffold might make sense here, but it enforces some things I don't like
+
+            Column(modifier = Modifier.withDebugBorder(states), verticalArrangement = Arrangement.SpaceBetween) {
+                Row(Modifier.height(48.dp)) {
+                    ControlBar(modifier = Modifier.fillMaxSize(), states = states)
+                }
+
                 Box {
                     Row(Modifier.height(150.dp).align(Alignment.BottomEnd)) {
                         TrackBar(modifier = Modifier.fillMaxSize().shadow(96.dp), states = states)
                     }
 
-                    Row(Modifier.fillMaxSize().align(Alignment.TopStart)) {
-                        Playlist(states = states)
+                    // Without the padding it would overflow
+                    Row(Modifier.padding(bottom = 150.dp)) {
+                        when (states.screen.value) {
+                            Screen.Library -> LibraryScreen(states)
+                            Screen.LogMessages -> LogMessagesScreen(states)
+                            Screen.Settings -> SettingsScreen(states)
+                        }
                     }
                 }
             }
@@ -97,16 +66,25 @@ fun App(states: States) {
 fun main() = application {
     Window(onCloseRequest = ::exitApplication,
            title = "Stupid music player that doesn't even play music",
-           state = WindowState(size = DpSize(700.dp, 700.dp))) {
+           state = WindowState(size = DpSize(650.dp, 650.dp))) {
+        // Smaller than that and we get problems.
+        window.minimumSize = with(LocalDensity.current) { Dimension(650.dp.roundToPx(), 300.dp.roundToPx()) }
+
         val states = States(library = remember { mutableStateListOf() },
+                            paths = remember { mutableStateListOf() },
+                            messages = remember { mutableStateListOf() },
                             currentTrack = remember { mutableStateOf(null) },
                             playing = remember { mutableStateOf(false) },
                             shuffle = remember { mutableStateOf(false) },
                             repeat = remember { mutableStateOf(false) },
                             volume = remember { mutableStateOf(0.69f) },
                             theme = remember { mutableStateOf(Themes.default) },
+                            screen = remember { mutableStateOf(Screens.default) },
                             borderStroke = remember { mutableStateOf(BorderStroke(0.dp, Color.Transparent)) },
                             songPosition = remember { mutableStateOf(0) })
+
+        states.paths.add(""/*libraryPath.toString()*/)
+        // for (path in states.paths) if (path.isNotEmpty()) states.library.addAll(scanLibrary(Path.of(path)) ?: emptyList())
 
         MenuBar {
             Menu("File", mnemonic = 'F') {
@@ -116,17 +94,7 @@ fun main() = application {
                 }
 
                 Item("Rescan library", mnemonic = 'R', icon = rememberVectorPainter(Icons.Black.refresh)) {
-                    println("Re-scanning library")
-
-                    states.library.filter { Files.notExists(it.file) }.forEach {
-                        println("Removing: ${it.file.fileName}")
-                        states.library.remove(it)
-                    }
-
-                    scanLibrary(libraryPath)?.filter { it !in states.library }?.forEach {
-                        println("Found new track: ${it.file.fileName}")
-                        states.library.add(it)
-                    }
+                    rescanLibrary(states)
                 }
 
                 Separator()
@@ -209,9 +177,10 @@ fun main() = application {
                                  checked = states.borderStroke.value.width == 1.dp,
                                  shortcut = KeyShortcut(Key.B, ctrl = true),
                                  icon = rememberVectorPainter(Icons.Black.bug)) {
-                        states.borderStroke.value =
-                            if (it) BorderStroke(1.dp, states.theme.value.error) else BorderStroke(0.dp,
-                                                                                                   Color.Transparent)
+                        if (states.borderStroke.value.width == 1.dp) {
+                            states.borderStroke.value = BorderStroke(1.dp, states.theme.value.error)
+                        }
+                        toggleBorders(states)
                     }
                 }
                 Separator()
