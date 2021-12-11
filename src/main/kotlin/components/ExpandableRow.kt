@@ -18,8 +18,8 @@ fun ExpandableRow(
     modifier: Modifier = Modifier,
     states: States,
     onClick: (() -> Unit)? = null,
-    expandableContent: @Composable AnimatedVisibilityScope.() -> Unit,
     innerContent: @Composable RowScope.() -> Unit,
+    expandableContent: @Composable AnimatedVisibilityScope.() -> Unit,
 ) {
     var expand by remember { mutableStateOf(false) }
 

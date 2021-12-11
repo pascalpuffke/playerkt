@@ -53,7 +53,7 @@ fun SettingsScreen(
                     CategoryTitle("Library management", states)
                     ExpandableRow(states = states, innerContent = {
                         SingleLineText("Search paths")
-                    }, expandableContent = {
+                    }) {
                         states.paths.forEachIndexed { index, s ->
                             Column {
                                 TextField(value = s, modifier = Modifier.fillMaxWidth().padding(5.dp), onValueChange = {
@@ -61,7 +61,7 @@ fun SettingsScreen(
                                 })
                             }
                         }
-                    })
+                    }
                     ClickableRow(states = states, onClick = {
                         rescanLibrary(states)
                     }) {
@@ -80,7 +80,7 @@ fun SettingsScreen(
                                 append("(${states.theme.value})")
                             }
                         })
-                    }, expandableContent = {
+                    }) {
                         Column {
                             for (theme in Theme.values()) {
                                 Row(modifier = Modifier.height(48.dp).fillMaxWidth().padding(5.dp)
@@ -105,7 +105,7 @@ fun SettingsScreen(
                                 }
                             }
                         }
-                    })
+                    }
 
                     Spacer(modifier = Modifier.height(24.dp))
                 }
