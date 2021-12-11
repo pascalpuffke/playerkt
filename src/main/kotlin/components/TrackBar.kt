@@ -5,16 +5,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import resources.Icons
@@ -46,24 +47,20 @@ fun TrackBar(
                 Column(Modifier.fillMaxHeight(.33f).withDebugBorder(states)) {
                     if (states.currentTrack.value != null) {
                         Row {
-                            Text(states.currentTrack.value!!.title, overflow = TextOverflow.Ellipsis, maxLines = 1)
+                            SingleLineText(states.currentTrack.value!!.title)
                         }
                         Row {
-                            Text(buildAnnotatedString {
+                            SingleLineText(buildAnnotatedString {
                                 append(states.currentTrack.value!!.artist ?: "Unknown artist")
                                 withStyle(SpanStyle(states.theme.value.textContrast)) {
                                     append(" - ")
                                     append(states.currentTrack.value!!.album ?: "Unknown album")
                                 }
-                            }, overflow = TextOverflow.Ellipsis, maxLines = 1)
+                            })
                         }
                     } else {
                         Row {
-                            Text(buildAnnotatedString {
-                                withStyle(SpanStyle(states.theme.value.textContrast)) {
-                                    append("Nothing playing :(")
-                                }
-                            })
+                            SingleLineText("Nothing playing :(", color = states.theme.value.textContrast)
                         }
                     }
                 }
@@ -80,7 +77,7 @@ fun TrackBar(
                                 tooltip = {
                                     Surface(Modifier.background(states.theme.value.background,
                                                                 RoundedCornerShape(10.dp))) {
-                                        Text("${(states.volume.value * 100).roundToInt()}%")
+                                        SingleLineText("${(states.volume.value * 100).roundToInt()}%")
                                     }
                                 },
                             ) {
@@ -109,8 +106,7 @@ fun TrackBar(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             IconButton(icon = Icons.White.shuffle,
-                                       debugBorderStroke = states.borderStroke,
-                                       modifier = Modifier.fillMaxHeight(.75f),
+                                       modifier = Modifier.fillMaxHeight(.75f).withDebugBorder(states),
                                        iconPadding = 8.dp,
                                        colors = ButtonDefaults.buttonColors(backgroundColor = if (states.shuffle.value) states.theme.value.primary else states.theme.value.backgroundContrast)) {
                                 states.shuffle.value = !states.shuffle.value
@@ -119,8 +115,7 @@ fun TrackBar(
                             }
                             Spacer(Modifier.width(20.dp))
                             IconButton(icon = Icons.White.previous,
-                                       debugBorderStroke = states.borderStroke,
-                                       modifier = Modifier.fillMaxHeight(.9f),
+                                       modifier = Modifier.fillMaxHeight(.9f).withDebugBorder(states),
                                        iconPadding = 8.dp,
                                        colors = ButtonDefaults.buttonColors(backgroundColor = states.theme.value.background)) {
                                 states.songPosition.value = 0
@@ -129,16 +124,14 @@ fun TrackBar(
                             Spacer(Modifier.width(10.dp))
                             IconButton(
                                 icon = if (states.playing.value) Icons.White.pause else androidx.compose.material.icons.Icons.Default.PlayArrow,
-                                debugBorderStroke = states.borderStroke,
-                                //modifier = Modifier.shadow(10.dp, CircleShape)
+                                modifier = Modifier.withDebugBorder(states).shadow(10.dp, CircleShape)
                             ) {
                                 states.playing.value = !states.playing.value
                                 player.pause()
                             }
                             Spacer(Modifier.width(10.dp))
                             IconButton(icon = Icons.White.next,
-                                       debugBorderStroke = states.borderStroke,
-                                       modifier = Modifier.fillMaxHeight(.9f),
+                                       modifier = Modifier.fillMaxHeight(.9f).withDebugBorder(states),
                                        iconPadding = 8.dp,
                                        colors = ButtonDefaults.buttonColors(backgroundColor = states.theme.value.background)) {
                                 states.songPosition.value = states.currentTrack.value?.duration ?: 0
@@ -146,8 +139,7 @@ fun TrackBar(
                             }
                             Spacer(Modifier.width(20.dp))
                             IconButton(icon = Icons.White.repeat,
-                                       debugBorderStroke = states.borderStroke,
-                                       modifier = Modifier.fillMaxHeight(.75f),
+                                       modifier = Modifier.fillMaxHeight(.75f).withDebugBorder(states),
                                        iconPadding = 8.dp,
                                        colors = ButtonDefaults.buttonColors(backgroundColor = if (states.repeat.value) states.theme.value.primary else states.theme.value.backgroundContrast)) {
                                 states.repeat.value = !states.repeat.value
@@ -157,15 +149,11 @@ fun TrackBar(
                         }
                     }
                 }
-                //}
 
                 Row(modifier = Modifier.fillMaxWidth().withDebugBorder(states),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(songPosToString(states.songPosition.value),
-                         color = states.theme.value.textContrast,
-                         overflow = TextOverflow.Ellipsis,
-                         maxLines = 1)
+                    SingleLineText(songPosToString(states.songPosition.value), color = states.theme.value.textContrast)
                     Spacer(Modifier.padding(4.dp))
                     if (states.currentTrack.value == null) {
                         Slider(value = 0f,
@@ -184,10 +172,8 @@ fun TrackBar(
                                modifier = Modifier.fillMaxWidth(.875f).withDebugBorder(states))
                     }
                     Spacer(Modifier.padding(4.dp))
-                    Text(songPosToString(states.currentTrack.value?.duration ?: 0),
-                         color = states.theme.value.textContrast,
-                         overflow = TextOverflow.Ellipsis,
-                         maxLines = 1)
+                    SingleLineText(songPosToString(states.currentTrack.value?.duration ?: 0),
+                                   color = states.theme.value.textContrast)
                 }
             }
         }

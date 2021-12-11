@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -18,11 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import components.ClickableRow
 import components.ExpandableRow
+import components.SingleLineText
 import resources.Icons
 import resources.States
 import resources.Theme
@@ -33,7 +32,7 @@ import utils.withDebugBorder
 @Composable
 fun CategoryTitle(text: String, states: States) {
     Row(modifier = Modifier.height(24.dp).withDebugBorder(states), verticalAlignment = Alignment.CenterVertically) {
-        Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        SingleLineText(text)
     }
 }
 
@@ -53,7 +52,7 @@ fun SettingsScreen(
                 item {
                     CategoryTitle("Library management", states)
                     ExpandableRow(states = states, innerContent = {
-                        Text("Search paths")
+                        SingleLineText("Search paths")
                     }, expandableContent = {
                         states.paths.forEachIndexed { index, s ->
                             Column {
@@ -66,7 +65,7 @@ fun SettingsScreen(
                     ClickableRow(states = states, onClick = {
                         rescanLibrary(states)
                     }) {
-                        Text("Refresh library")
+                        SingleLineText("Refresh library")
                     }
                     Spacer(modifier = Modifier.height(24.dp))
                 }
@@ -74,7 +73,7 @@ fun SettingsScreen(
                 item {
                     CategoryTitle("Theme", states)
                     ExpandableRow(states = states, innerContent = {
-                        Text(buildAnnotatedString {
+                        SingleLineText(buildAnnotatedString {
                             append("Select theme ")
 
                             withStyle(SpanStyle(color = states.theme.value.textContrast)) {
@@ -101,10 +100,7 @@ fun SettingsScreen(
                                     }
                                     Spacer(Modifier.width(8.dp))
                                     Column(modifier = Modifier.fillMaxWidth().withDebugBorder(states)) {
-                                        Text(text = theme.toString(),
-                                             color = color,
-                                             maxLines = 1,
-                                             overflow = TextOverflow.Ellipsis)
+                                        SingleLineText(text = theme.toString(), color = color)
                                     }
                                 }
                             }
@@ -121,7 +117,7 @@ fun SettingsScreen(
                         println("Toggled borders: $result")
                         bordersEnabled.value = result
                     }) {
-                        Text("Draw UI boundaries")
+                        SingleLineText("Draw UI boundaries")
                     }
                 }
             }

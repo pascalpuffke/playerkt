@@ -2,11 +2,9 @@ package components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import resources.Icons
 import resources.States
@@ -35,26 +33,20 @@ fun PlaylistEntry(
                     }
                     Spacer(Modifier.width(8.dp))
                     Column(modifier = Modifier.fillMaxWidth().withDebugBorder(states)) {
-                        Text(text = track.title, color = color, overflow = TextOverflow.Ellipsis, maxLines = 1)
+                        SingleLineText(text = track.title, color = color)
                     }
                 }
             }
 
             Column(modifier = Modifier.fillMaxWidth(.33f).withDebugBorder(states)) {
                 Row {
-                    Text(text = track.artist ?: "Unknown artist",
-                         color = color,
-                         overflow = TextOverflow.Ellipsis,
-                         maxLines = 1)
+                    SingleLineText(text = track.artist ?: "Unknown artist", color = color)
                 }
             }
 
             Column(modifier = Modifier.fillMaxWidth().withDebugBorder(states)) {
                 Row {
-                    Text(text = track.album ?: "Unknown album",
-                         color = color,
-                         overflow = TextOverflow.Ellipsis,
-                         maxLines = 1)
+                    SingleLineText(text = track.album ?: "Unknown album", color = color)
                 }
             }
         }
