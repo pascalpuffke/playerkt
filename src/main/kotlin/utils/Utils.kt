@@ -25,6 +25,8 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.io.path.isRegularFile
+import kotlin.math.ln
+import kotlin.math.pow
 
 // Seems convenient, but may be a bit ridiculous writing these as String extensions
 fun String.loadAsImageBitmap() = loadImageBitmap(File(this).inputStream())
@@ -135,3 +137,21 @@ fun toggleBorders(states: States): Boolean {
     return false
 }
 
+object Memory {
+    private val runtime = Runtime.getRuntime()
+
+    fun format(memory: Long): String {
+        val unit = 1024
+        if (memory < unit) return "$memory B"
+        val exp = (ln(memory.toDouble()) / ln(unit.toDouble())).toInt()
+        val pre = "KMGTPE"[exp - 1] + "i"
+        return String.format("%.2f %sB", memory / unit.toDouble().pow(exp), pre)
+    }
+
+    fun total(): Long = runtime.totalMemory()
+    fun free(): Long = runtime.freeMemory()
+    fun max(): Long = runtime.maxMemory()
+}
+
+val jvmName =
+    "${System.getProperty("java.vm.vendor")} ${System.getProperty("java.vm.name")} ${System.getProperty("java.vm.version")}"
