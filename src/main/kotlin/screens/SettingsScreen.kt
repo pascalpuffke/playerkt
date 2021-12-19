@@ -124,23 +124,25 @@ fun SettingsScreen(
                     SingleLineText("Run garbage collection")
                 }
 
-                TextRow(states) {
-                    SingleLineText(buildAnnotatedString {
-                        append("Max memory: ")
-                        withStyle(SpanStyle(states.theme.value.textContrast)) {
-                            append(Memory.format(Memory.max()))
-                        }
-                    })
+                @Composable
+                fun ContrastTextRow(key: String, value: String) {
+                    TextRow(states) {
+                        SingleLineText(buildAnnotatedString {
+                            append(key)
+
+                            withStyle(SpanStyle(states.theme.value.textContrast)) {
+                                append(value)
+                            }
+                        })
+                    }
                 }
 
-                TextRow(states) {
-                    SingleLineText(buildAnnotatedString {
-                        append("JVM: ")
-                        withStyle(SpanStyle(states.theme.value.textContrast)) {
-                            append(jvmName)
-                        }
-                    })
-                }
+                ContrastTextRow("Used memory: ",
+                                "${Memory.format(Memory.used())} (${(Memory.used() * 100 / Memory.max()).toInt()}%)")
+                ContrastTextRow("Free memory: ",
+                                "${Memory.format(Memory.free())} (${(Memory.free() * 100 / Memory.max()).toInt()}%)")
+                ContrastTextRow("Max memory: ", Memory.format(Memory.max()))
+                ContrastTextRow("JVM: ", jvmName)
             }
 
             VerticalScrollbar(modifier = Modifier.align(Alignment.CenterEnd).withDebugBorder(states),

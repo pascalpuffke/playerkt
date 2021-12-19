@@ -151,6 +151,7 @@ object Memory {
     fun total(): Long = runtime.totalMemory()
     fun free(): Long = runtime.freeMemory()
     fun max(): Long = runtime.maxMemory()
+    fun used(): Long = total() - free()
 }
 
 val jvmName =
