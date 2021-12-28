@@ -2,6 +2,8 @@ package resources
 
 import androidx.compose.material.Colors
 import androidx.compose.ui.graphics.Color
+import org.jetbrains.skiko.SystemTheme
+import org.jetbrains.skiko.currentSystemTheme
 
 enum class Theme(val colors: Colors, val backgroundContrast: Color, val textContrast: Color) {
     GruvboxDark(
@@ -119,5 +121,5 @@ enum class Theme(val colors: Colors, val backgroundContrast: Color, val textCont
 }
 
 object Themes {
-    val default = Theme.AyuDark
+    val default = if (currentSystemTheme == SystemTheme.DARK) Theme.AyuMirage else Theme.AyuLight
 }
