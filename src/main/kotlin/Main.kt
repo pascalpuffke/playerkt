@@ -2,6 +2,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +20,9 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
+import components.ClickableRow
 import components.ControlBar
 import components.TrackBar
 import resources.*
@@ -50,10 +52,55 @@ fun App(states: States) {
 
                     // Without the padding it would overflow
                     Row(Modifier.padding(bottom = 150.dp)) {
-                        when (states.screen.value) {
-                            Screen.Library -> LibraryScreen(states)
-                            Screen.LogMessages -> LogMessagesScreen(states)
-                            Screen.Settings -> SettingsScreen(states)
+                        if (states.window.size.width >= 800.dp) {
+                            Column(modifier = Modifier.width(250.dp).fillMaxHeight().withDebugBorder(states),
+                                   horizontalAlignment = Alignment.CenterHorizontally) {
+                                ClickableRow(modifier = Modifier.fillMaxWidth(),
+                                             states = states,
+                                             icon = Icons.Black.home,
+                                             onClick = {}) {
+                                    Text("Home")
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                                ClickableRow(modifier = Modifier.fillMaxWidth(),
+                                             states = states,
+                                             icon = Icons.Black.musicNote,
+                                             onClick = {}) {
+                                    Text("Tracks")
+                                }
+                                ClickableRow(modifier = Modifier.fillMaxWidth(),
+                                             states = states,
+                                             icon = Icons.Black.musicNote,
+                                             onClick = {}) {
+                                    Text("Albums")
+                                }
+                                ClickableRow(modifier = Modifier.fillMaxWidth(),
+                                             states = states,
+                                             icon = Icons.Black.musicNote,
+                                             onClick = {}) {
+                                    Text("Artists")
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                                ClickableRow(modifier = Modifier.fillMaxWidth(),
+                                             states = states,
+                                             icon = Icons.Black.queue,
+                                             onClick = {}) {
+                                    Text("Playlists")
+                                }
+                                ClickableRow(modifier = Modifier.fillMaxWidth().padding(start = 12.dp),
+                                             states = states,
+                                             icon = Icons.Black.add,
+                                             onClick = {}) {
+                                    Text("Create new...")
+                                }
+                            }
+                        }
+                        Surface(color = states.theme.value.backgroundContrast) {
+                            when (states.screen.value) {
+                                Screen.Library -> LibraryScreen(states)
+                                Screen.LogMessages -> LogMessagesScreen(states)
+                                Screen.Settings -> SettingsScreen(states)
+                            }
                         }
                     }
                 }
@@ -64,9 +111,10 @@ fun App(states: States) {
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
+    val windowState = rememberWindowState(size = DpSize(650.dp, 650.dp))
     Window(onCloseRequest = ::exitApplication,
            title = "Stupid music player that doesn't even play music",
-           state = WindowState(size = DpSize(650.dp, 650.dp))) {
+           state = windowState) {
         // Smaller than that and we get problems.
         window.minimumSize = with(LocalDensity.current) { Dimension(650.dp.roundToPx(), 300.dp.roundToPx()) }
 
@@ -81,7 +129,8 @@ fun main() = application {
                             theme = remember { mutableStateOf(Themes.default) },
                             screen = remember { mutableStateOf(Screens.default) },
                             borderStroke = remember { mutableStateOf(BorderStroke(0.dp, Color.Transparent)) },
-                            songPosition = remember { mutableStateOf(0) })
+                            songPosition = remember { mutableStateOf(0) },
+                            window = windowState)
 
         states.paths.add(""/*libraryPath.toString()*/)
         // for (path in states.paths) if (path.isNotEmpty()) states.library.addAll(scanLibrary(Path.of(path)) ?: emptyList())

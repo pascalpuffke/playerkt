@@ -70,5 +70,7 @@ object Icons {
         val darkMode = "res/icon/black/outline_dark_mode_24.xml".loadAsImageVector()
         val lightMode = "res/icon/black/outline_light_mode_24.xml".loadAsImageVector()
         val feed = "res/icon/black/outline_feed_24.xml".loadAsImageVector()
+        val add = "res/icon/black/outline_add_circle_outline_24.xml".loadAsImageVector()
+        val home = "res/icon/black/outline_home_24.xml".loadAsImageVector()
     }
 }

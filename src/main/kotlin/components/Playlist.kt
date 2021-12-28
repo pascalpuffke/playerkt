@@ -4,10 +4,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -27,7 +24,7 @@ import utils.withDebugBorder
 fun Playlist(
     modifier: Modifier = Modifier, states: States,
 ) {
-    Box(modifier.fillMaxWidth().withDebugBorder(states)) {
+    Box(modifier = modifier.fillMaxSize().withDebugBorder(states)) {
         val lazyListState = rememberLazyListState()
 
         LazyColumn(state = lazyListState) {

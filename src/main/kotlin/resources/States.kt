@@ -3,6 +3,7 @@ package resources
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.window.WindowState
 import utils.LogMessage
 import utils.Track
 
@@ -24,4 +25,5 @@ data class States(
     val screen: MutableState<Screen>,
     val borderStroke: MutableState<BorderStroke>,
     var songPosition: MutableState<Int>,
+    val window: WindowState,
 )
