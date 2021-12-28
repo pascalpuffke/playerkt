@@ -2,7 +2,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -22,7 +21,6 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import components.ClickableRow
 import components.ControlBar
 import components.TrackBar
 import resources.*
@@ -53,47 +51,7 @@ fun App(states: States) {
                     // Without the padding it would overflow
                     Row(Modifier.padding(bottom = 150.dp)) {
                         if (states.window.size.width >= 800.dp) {
-                            Column(modifier = Modifier.width(250.dp).fillMaxHeight().withDebugBorder(states),
-                                   horizontalAlignment = Alignment.CenterHorizontally) {
-                                ClickableRow(modifier = Modifier.fillMaxWidth(),
-                                             states = states,
-                                             icon = Icons.Black.home,
-                                             onClick = {}) {
-                                    Text("Home")
-                                }
-                                Spacer(modifier = Modifier.height(12.dp))
-                                ClickableRow(modifier = Modifier.fillMaxWidth(),
-                                             states = states,
-                                             icon = Icons.Black.musicNote,
-                                             onClick = {}) {
-                                    Text("Tracks")
-                                }
-                                ClickableRow(modifier = Modifier.fillMaxWidth(),
-                                             states = states,
-                                             icon = Icons.Black.musicNote,
-                                             onClick = {}) {
-                                    Text("Albums")
-                                }
-                                ClickableRow(modifier = Modifier.fillMaxWidth(),
-                                             states = states,
-                                             icon = Icons.Black.musicNote,
-                                             onClick = {}) {
-                                    Text("Artists")
-                                }
-                                Spacer(modifier = Modifier.height(12.dp))
-                                ClickableRow(modifier = Modifier.fillMaxWidth(),
-                                             states = states,
-                                             icon = Icons.Black.queue,
-                                             onClick = {}) {
-                                    Text("Playlists")
-                                }
-                                ClickableRow(modifier = Modifier.fillMaxWidth().padding(start = 12.dp),
-                                             states = states,
-                                             icon = Icons.Black.add,
-                                             onClick = {}) {
-                                    Text("Create new...")
-                                }
-                            }
+                            SideBar(states = states)
                         }
                         Surface(color = states.theme.value.backgroundContrast) {
                             when (states.screen.value) {
@@ -132,8 +90,7 @@ fun main() = application {
                             songPosition = remember { mutableStateOf(0) },
                             window = windowState)
 
-        states.paths.add(""/*libraryPath.toString()*/)
-        // for (path in states.paths) if (path.isNotEmpty()) states.library.addAll(scanLibrary(Path.of(path)) ?: emptyList())
+        states.paths.add("")
 
         MenuBar {
             Menu("File", mnemonic = 'F') {
