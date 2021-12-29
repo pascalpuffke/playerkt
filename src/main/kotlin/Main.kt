@@ -55,7 +55,7 @@ private fun App(states: States) {
                     // Without the padding it would overflow
                     Row(Modifier.padding(bottom = 150.dp)) {
                         if (states.window.size.width >= 800.dp) {
-                            SideBar(states = states)
+                            SideBar(modifier = Modifier.width(250.dp), states = states)
                         }
                         Surface(color = states.theme.value.backgroundContrast) {
                             when (states.screen.value) {
@@ -165,10 +165,11 @@ fun main() = application {
         readFiles(states)
     }
 
-    Window(onCloseRequest = {
-        saveFiles(states)
-        exitApplication()
-    }, title = "Stupid music player that doesn't even play music", state = windowState) {
+    Runtime.getRuntime().addShutdownHook(Thread { saveFiles(states) })
+
+    Window(onCloseRequest = ::exitApplication,
+           title = "Stupid music player that doesn't even play music",
+           state = windowState) {
         // Smaller than that and we get problems.
         window.minimumSize = with(LocalDensity.current) { Dimension(650.dp.roundToPx(), 300.dp.roundToPx()) }
 

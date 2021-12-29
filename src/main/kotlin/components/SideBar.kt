@@ -7,26 +7,27 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import components.ClickableRow
 import components.ExpandableRow
 import resources.Icons
+import resources.Screen
 import resources.States
 import utils.withDebugBorder
 
 @Composable
 fun SideBar(
     modifier: Modifier = Modifier,
-    width: Dp = 250.dp,
     states: States,
 ) {
     val scrollState = rememberScrollState()
 
     Box {
-        Column(modifier = modifier.width(width).fillMaxHeight().verticalScroll(scrollState).withDebugBorder(states),
+        Column(modifier = modifier.fillMaxHeight().verticalScroll(scrollState).withDebugBorder(states),
                horizontalAlignment = Alignment.CenterHorizontally) {
-            ClickableRow(modifier = Modifier.fillMaxWidth(), states = states, icon = Icons.Black.home, onClick = {}) {
+            ClickableRow(modifier = Modifier.fillMaxWidth(), states = states, icon = Icons.Black.home, onClick = {
+                states.screen.value = Screen.Library
+            }) {
                 Text("Home")
             }
             Spacer(modifier = Modifier.height(12.dp))
