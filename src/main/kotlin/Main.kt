@@ -109,8 +109,14 @@ private fun readFiles(states: States) {
                 currentTrack.value?.apply {
                     cover = loadCoverImage(states, filePath)
                 }
-                shuffle.value = settings.shuffle
-                repeat.value = settings.repeat
+                settings.shuffle.let {
+                    shuffle.value = it
+                    player.shuffle = it
+                }
+                settings.repeat.let {
+                    repeat.value = it
+                    player.repeat = it
+                }
                 volume.value = settings.volume
                 theme.value = settings.theme
                 screen.value = settings.screen
@@ -140,33 +146,31 @@ private fun saveFiles(states: States) {
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
     val windowState = rememberWindowState(size = DpSize(650.dp, 650.dp))
-    Window(onCloseRequest = ::exitApplication,
-           title = "Stupid music player that doesn't even play music",
-           state = windowState) {
+    val states = States(library = remember { mutableStateListOf() },
+                        paths = remember { mutableStateListOf("") },
+                        messages = remember { mutableStateListOf() },
+                        playlists = remember { mutableStateListOf() },
+                        currentTrack = remember { mutableStateOf(null) },
+                        playing = remember { mutableStateOf(false) },
+                        shuffle = remember { mutableStateOf(false) },
+                        repeat = remember { mutableStateOf(false) },
+                        volume = remember { mutableStateOf(0.69f) },
+                        theme = remember { mutableStateOf(Themes.default) },
+                        screen = remember { mutableStateOf(Screens.default) },
+                        borderStroke = remember { mutableStateOf(BorderStroke(0.dp, Color.Transparent)) },
+                        songPosition = remember { mutableStateOf(0) },
+                        window = windowState)
+
+    remember {
+        readFiles(states)
+    }
+
+    Window(onCloseRequest = {
+        saveFiles(states)
+        exitApplication()
+    }, title = "Stupid music player that doesn't even play music", state = windowState) {
         // Smaller than that and we get problems.
         window.minimumSize = with(LocalDensity.current) { Dimension(650.dp.roundToPx(), 300.dp.roundToPx()) }
-
-        val states = States(library = remember { mutableStateListOf() },
-                            paths = remember { mutableStateListOf() },
-                            messages = remember { mutableStateListOf() },
-                            playlists = remember { mutableStateListOf() },
-                            currentTrack = remember { mutableStateOf(null) },
-                            playing = remember { mutableStateOf(false) },
-                            shuffle = remember { mutableStateOf(false) },
-                            repeat = remember { mutableStateOf(false) },
-                            volume = remember { mutableStateOf(0.69f) },
-                            theme = remember { mutableStateOf(Themes.default) },
-                            screen = remember { mutableStateOf(Screens.default) },
-                            borderStroke = remember { mutableStateOf(BorderStroke(0.dp, Color.Transparent)) },
-                            songPosition = remember { mutableStateOf(0) },
-                            window = windowState)
-
-        readFiles(states)
-        states.paths.add("")
-
-        Runtime.getRuntime().addShutdownHook(Thread {
-            saveFiles(states)
-        })
 
         MenuBar {
             Menu("File", mnemonic = 'F') {
