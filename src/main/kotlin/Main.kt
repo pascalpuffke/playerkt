@@ -1,11 +1,11 @@
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -47,15 +47,23 @@ private fun App(states: States) {
                     ControlBar(modifier = Modifier.fillMaxSize(), states = states)
                 }
 
-                Box {
+                BoxWithConstraints {
+                    val constraintsScope = this
+
                     Row(Modifier.height(150.dp).align(Alignment.BottomEnd)) {
                         TrackBar(modifier = Modifier.fillMaxSize().shadow(96.dp), states = states)
                     }
 
                     // Without the padding it would overflow
                     Row(Modifier.padding(bottom = 150.dp)) {
-                        if (states.window.size.width >= 800.dp) {
-                            SideBar(modifier = Modifier.width(250.dp), states = states)
+                        var sideBarVisible by remember { mutableStateOf(true) }
+                        sideBarVisible = constraintsScope.maxWidth >= 800.dp
+                        AnimatedVisibility(visible = sideBarVisible,
+                                           enter = slideInHorizontally(),
+                                           exit = slideOutHorizontally()) {
+                            Column {
+                                SideBar(modifier = Modifier.width(250.dp), states = states)
+                            }
                         }
                         Surface(color = states.theme.value.backgroundContrast) {
                             when (states.screen.value) {
@@ -158,8 +166,7 @@ fun main() = application {
                         theme = remember { mutableStateOf(Themes.default) },
                         screen = remember { mutableStateOf(Screens.default) },
                         borderStroke = remember { mutableStateOf(BorderStroke(0.dp, Color.Transparent)) },
-                        songPosition = remember { mutableStateOf(0) },
-                        window = windowState)
+                        songPosition = remember { mutableStateOf(0) })
 
     remember {
         readFiles(states)
