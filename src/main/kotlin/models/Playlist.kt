@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Playlist(
     val name: String,
-    val tracks: MutableList<Track>,
+    val tracks: MutableList<Track> = mutableListOf(),
 )

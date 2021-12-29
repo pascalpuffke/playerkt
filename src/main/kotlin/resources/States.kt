@@ -3,9 +3,9 @@ package resources
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.window.WindowState
 import models.LogMessage
 import models.Playlist
+import models.Settings
 import models.Track
 
 /**
@@ -27,5 +27,15 @@ data class States(
     val screen: MutableState<Screen>,
     val borderStroke: MutableState<BorderStroke>,
     var songPosition: MutableState<Int>,
-    val window: WindowState,
-)
+) {
+    fun toSettings() = Settings(
+        paths = paths as List<String>,
+        lastTrack = currentTrack.value,
+        shuffle = shuffle.value,
+        repeat = repeat.value,
+        theme = theme.value,
+        volume = volume.value,
+        screen = screen.value,
+        songPosition = songPosition.value,
+    )
+}

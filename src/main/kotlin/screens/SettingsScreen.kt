@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -76,11 +77,17 @@ fun SettingsScreen(
             ExpandableRow(states = states, innerContent = {
                 SingleLineText("Search paths")
             }) {
-                states.paths.forEachIndexed { index, s ->
-                    Column {
-                        TextField(value = s, modifier = Modifier.fillMaxWidth().padding(5.dp), onValueChange = {
-                            states.paths[index] = it
-                        })
+                Column {
+                    states.paths.forEachIndexed { index, s ->
+                        Row {
+                            TextField(value = s,
+                                      modifier = Modifier.fillMaxWidth().padding(5.dp),
+                                      singleLine = true,
+                                      shape = RectangleShape,
+                                      onValueChange = {
+                                          states.paths[index] = it
+                                      })
+                        }
                     }
                 }
             }
