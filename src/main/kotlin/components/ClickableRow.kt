@@ -23,7 +23,7 @@ fun ClickableRow(
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(modifier = modifier.height(48.dp).fillMaxWidth().clickable {
-        if (onClick != null) onClick()
+        onClick?.invoke()
         if (clicked != null) clicked.value = !clicked.value
     }.withDebugBorder(states).padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
         val rowScope = this

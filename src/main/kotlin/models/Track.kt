@@ -1,8 +1,12 @@
-package utils
+package models
 
 import androidx.compose.ui.graphics.ImageBitmap
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import serialization.PathSerializer
 import java.nio.file.Path
 
+@Serializable
 data class Track(
     val title: String,
     val artist: String? = null,
@@ -15,6 +19,6 @@ data class Track(
     val sampleRate: Int,
     val bitrate: Long,
     val size: Long,
-    val filePath: Path,
-    var cover: ImageBitmap? = null,
+    @Serializable(with = PathSerializer::class) val filePath: Path,
+    @Transient var cover: ImageBitmap? = null,
 )

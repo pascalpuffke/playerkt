@@ -23,17 +23,21 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import components.ControlBar
 import components.TrackBar
+import models.LogMessage
 import resources.*
 import screens.LibraryScreen
 import screens.LogMessagesScreen
 import screens.SettingsScreen
+import utils.loadCoverImage
 import utils.rescanLibrary
 import utils.toggleBorders
 import utils.withDebugBorder
 import java.awt.Dimension
+import java.nio.file.Files
+import kotlin.io.path.exists
 
 @Composable
-fun App(states: States) {
+private fun App(states: States) {
     MaterialTheme(states.theme.value.colors, Fonts.fonts) {
         Surface(Modifier.fillMaxSize()) {
             // A Scaffold might make sense here, but it enforces some things I don't like
@@ -67,6 +71,72 @@ fun App(states: States) {
     }
 }
 
+private fun readFiles(states: States) {
+    if (Files.exists(Serializers.libraryFilePath)) {
+        println("Found existing library file")
+        states.messages.add(LogMessage("Found existing library file"))
+
+        val library = Serializers.librarySerializer.readFromFile()
+        var count = 0
+        library.filter { it.filePath.exists() }.forEach {
+            count++
+            states.library += it
+        }
+
+        println("Added $count tracks from library file")
+        states.messages.add(LogMessage("Added $count tracks from library file"))
+    }
+
+    if (Files.exists(Serializers.playlistsFilePath)) {
+        println("Found existing playlist file")
+        states.messages.add(LogMessage("Found existing playlist file"))
+
+        val playlists = Serializers.playlistsSerializer.readFromFile()
+        states.playlists += playlists
+
+        println("Added ${playlists.size} playlists from playlist file")
+        states.messages.add(LogMessage("Added ${playlists.size} playlists from playlist file"))
+    }
+
+    if (Files.exists(Serializers.settingsFilePath)) {
+        println("Found existing settings file")
+        states.messages.add(LogMessage("Found existing settings file"))
+
+        Serializers.settingsSerializer.readFromFile().let { settings ->
+            states.apply {
+                paths += settings.paths
+                currentTrack.value = settings.lastTrack
+                currentTrack.value?.apply {
+                    cover = loadCoverImage(states, filePath)
+                }
+                shuffle.value = settings.shuffle
+                repeat.value = settings.repeat
+                volume.value = settings.volume
+                theme.value = settings.theme
+                screen.value = settings.screen
+                songPosition.value = settings.songPosition
+            }
+        }
+    }
+}
+
+private fun saveFiles(states: States) {
+    println("Saving library")
+    states.messages.add(LogMessage("Saving library"))
+
+    Serializers.librarySerializer.saveToFile(states.library)
+
+    println("Saving playlists")
+    states.messages.add(LogMessage("Saving playlists"))
+
+    Serializers.playlistsSerializer.saveToFile(states.playlists)
+
+    println("Saving settings")
+    states.messages.add(LogMessage("Saving settings"))
+
+    Serializers.settingsSerializer.saveToFile(states)
+}
+
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
     val windowState = rememberWindowState(size = DpSize(650.dp, 650.dp))
@@ -79,6 +149,7 @@ fun main() = application {
         val states = States(library = remember { mutableStateListOf() },
                             paths = remember { mutableStateListOf() },
                             messages = remember { mutableStateListOf() },
+                            playlists = remember { mutableStateListOf() },
                             currentTrack = remember { mutableStateOf(null) },
                             playing = remember { mutableStateOf(false) },
                             shuffle = remember { mutableStateOf(false) },
@@ -90,7 +161,12 @@ fun main() = application {
                             songPosition = remember { mutableStateOf(0) },
                             window = windowState)
 
+        readFiles(states)
         states.paths.add("")
+
+        Runtime.getRuntime().addShutdownHook(Thread {
+            saveFiles(states)
+        })
 
         MenuBar {
             Menu("File", mnemonic = 'F') {

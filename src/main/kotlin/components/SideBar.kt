@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import components.ClickableRow
+import components.ExpandableRow
 import resources.Icons
 import resources.States
 import utils.withDebugBorder
@@ -48,14 +49,26 @@ fun SideBar(
                 Text("Artists")
             }
             Spacer(modifier = Modifier.height(12.dp))
-            ClickableRow(modifier = Modifier.fillMaxWidth(), states = states, icon = Icons.Black.queue, onClick = {}) {
+            ExpandableRow(modifier = Modifier.fillMaxWidth(), states = states, innerContent = {
                 Text("Playlists")
-            }
-            ClickableRow(modifier = Modifier.fillMaxWidth().padding(start = 12.dp),
-                         states = states,
-                         icon = Icons.Black.add,
-                         onClick = {}) {
-                Text("Create new...")
+            }) {
+                Column {
+                    for (playlist in states.playlists) {
+                        ClickableRow(modifier = Modifier.fillMaxWidth().padding(start = 12.dp),
+                                     states = states,
+                                     icon = Icons.Black.queue,
+                                     onClick = {}) {
+                            Text(playlist.name)
+                        }
+                    }
+
+                    ClickableRow(modifier = Modifier.fillMaxWidth().padding(start = 12.dp),
+                                 states = states,
+                                 icon = Icons.Black.add,
+                                 onClick = {}) {
+                        Text("Create new...")
+                    }
+                }
             }
         }
 

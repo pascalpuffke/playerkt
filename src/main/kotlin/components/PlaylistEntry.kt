@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import models.Track
 import resources.Icons
 import resources.States
-import utils.Track
 import utils.withDebugBorder
 
 @Composable

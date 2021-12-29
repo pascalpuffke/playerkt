@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import models.MessageType
 import resources.States
-import utils.MessageType
 import utils.fromUnixTime
 import utils.withDebugBorder
 import java.time.format.DateTimeFormatter

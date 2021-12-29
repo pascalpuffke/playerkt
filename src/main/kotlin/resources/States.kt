@@ -4,8 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.window.WindowState
-import utils.LogMessage
-import utils.Track
+import models.LogMessage
+import models.Playlist
+import models.Track
 
 /**
  * Helper class to manage all data related to the state of the application.
@@ -16,6 +17,7 @@ data class States(
     var library: SnapshotStateList<Track>,
     var paths: SnapshotStateList<String>,
     var messages: SnapshotStateList<LogMessage>,
+    var playlists: SnapshotStateList<Playlist>,
     var currentTrack: MutableState<Track?>,
     val playing: MutableState<Boolean>,
     val shuffle: MutableState<Boolean>,

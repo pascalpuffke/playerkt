@@ -9,10 +9,14 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.loadXmlImageVector
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import models.LogMessage
+import models.MessageType
+import models.Track
 import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.tag.FieldKey
 import org.xml.sax.InputSource
+import resources.Serializers
 import resources.States
 import resources.fileTypes
 import java.io.File
@@ -47,14 +51,15 @@ fun songPosToString(pos: Int): String {
 fun loadCoverImage(states: States, path: Path): ImageBitmap? {
     try {
         println("Loading cover image for ${path.fileName}")
+        disableJAudioTaggerLogger()
+
         val audioFile = AudioFileIO.read(path.toFile())
         val artwork = audioFile.tag.firstArtwork ?: return null
+
         return loadImageBitmap(artwork.binaryData.inputStream())
     } catch (e: Exception) {
         e.printStackTrace()
-        states.messages.add(LogMessage(MessageType.Warning,
-                                       "Failed to load cover image for $path",
-                                       System.currentTimeMillis()))
+        states.messages.add(LogMessage("Failed to load cover image for $path", type = MessageType.Warning))
         return null
     }
 }
@@ -62,8 +67,7 @@ fun loadCoverImage(states: States, path: Path): ImageBitmap? {
 fun scanLibrary(states: States, path: Path): List<Track>? {
     if (Files.notExists(path)) return null
 
-    // Why isn't this the default? Their logger annihilates stdout.
-    Logger.getLogger("org.jaudiotagger").level = Level.OFF
+    disableJAudioTaggerLogger()
 
     val tracks = mutableListOf<Track>()
 
@@ -72,9 +76,7 @@ fun scanLibrary(states: States, path: Path): List<Track>? {
             try {
                 return@map AudioFileIO.read(it.toFile())
             } catch (e: Exception) {
-                states.messages.add(LogMessage(MessageType.Warning,
-                                               "Failed to load file $it",
-                                               System.currentTimeMillis()))
+                states.messages.add(LogMessage("Failed to load file $it", type = MessageType.Warning))
                 return@map null
             }
         }.filter { it != null }.map { it as AudioFile }
@@ -99,32 +101,28 @@ fun scanLibrary(states: States, path: Path): List<Track>? {
                               filePath = file.toPath())
 
             tracks.add(track)
-            states.messages.add(LogMessage(MessageType.Info,
-                                           "Found new track: ${track.filePath}",
-                                           System.currentTimeMillis()))
+            states.messages.add(LogMessage("Found new track: ${track.filePath}"))
         }
 
     return tracks.toList()
 }
 
 fun rescanLibrary(states: States) {
-    states.messages.add(LogMessage(MessageType.Info, "Re-scanning library", System.currentTimeMillis()))
+    states.messages.add(LogMessage("Re-scanning library"))
 
     states.library.filter { Files.notExists(it.filePath) }.forEach {
-        states.messages.add(LogMessage(MessageType.Info,
-                                       "Removed: ${it.filePath.fileName}",
-                                       System.currentTimeMillis()))
+        states.messages.add(LogMessage("Removed: ${it.filePath.fileName}"))
         states.library.remove(it)
     }
 
     states.paths.map { Path.of(it) }.forEach { path ->
         scanLibrary(states, path)?.filter { it !in states.library }?.forEach {
-            states.messages.add(LogMessage(MessageType.Info,
-                                           "Found new track: ${it.filePath.fileName}",
-                                           System.currentTimeMillis()))
+            states.messages.add(LogMessage("Found new track: ${it.filePath.fileName}"))
             states.library.add(it)
         }
     }
+
+    Serializers.librarySerializer.saveToFile(states.library)
 }
 
 fun toggleBorders(states: States): Boolean {
@@ -135,6 +133,10 @@ fun toggleBorders(states: States): Boolean {
     }
     states.borderStroke.value = BorderStroke(1.dp, states.theme.value.error)
     return false
+}
+
+fun disableJAudioTaggerLogger() {
+    Logger.getLogger("org.jaudiotagger").level = Level.OFF
 }
 
 object Memory {
