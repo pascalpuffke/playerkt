@@ -18,6 +18,9 @@ data class States(
     var paths: SnapshotStateList<String>,
     var messages: SnapshotStateList<LogMessage>,
     var playlists: SnapshotStateList<Playlist>,
+    // null = no playlist selected, show entire library
+    // anything else = index in playlists state list
+    var currentPlaylistIndex: MutableState<Int?>,
     var currentTrack: MutableState<Track?>,
     val playing: MutableState<Boolean>,
     val shuffle: MutableState<Boolean>,
@@ -29,7 +32,7 @@ data class States(
     var songPosition: MutableState<Int>,
 ) {
     fun toSettings() = Settings(
-        paths = paths as List<String>,
+        paths = paths.filter { it.isNotEmpty() },
         lastTrack = currentTrack.value,
         shuffle = shuffle.value,
         repeat = repeat.value,

@@ -80,6 +80,7 @@ fun SideBar(
                horizontalAlignment = Alignment.CenterHorizontally) {
             ClickableRow(modifier = Modifier.fillMaxWidth(), states = states, icon = Icons.Black.home, onClick = {
                 states.screen.value = Screen.Library
+                states.currentPlaylistIndex.value = null
             }) {
                 SingleLineText("Home")
             }
@@ -87,19 +88,28 @@ fun SideBar(
             ClickableRow(modifier = Modifier.fillMaxWidth(),
                          states = states,
                          icon = Icons.Black.musicNote,
-                         onClick = {}) {
+                         onClick = {
+                             states.screen.value = Screen.Library
+                             states.currentPlaylistIndex.value = null
+                         }) {
                 SingleLineText("Tracks")
             }
             ClickableRow(modifier = Modifier.fillMaxWidth(),
                          states = states,
                          icon = Icons.Black.musicNote,
-                         onClick = {}) {
+                         onClick = {
+                             states.screen.value = Screen.Library
+                             states.currentPlaylistIndex.value = null
+                         }) {
                 SingleLineText("Albums")
             }
             ClickableRow(modifier = Modifier.fillMaxWidth(),
                          states = states,
                          icon = Icons.Black.musicNote,
-                         onClick = {}) {
+                         onClick = {
+                             states.screen.value = Screen.Library
+                             states.currentPlaylistIndex.value = null
+                         }) {
                 SingleLineText("Artists")
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -107,12 +117,13 @@ fun SideBar(
                 SingleLineText("Playlists")
             }) {
                 Column {
-                    for (playlist in states.playlists) {
+                    states.playlists.forEachIndexed { index, playlist ->
                         ClickableRow(modifier = Modifier.fillMaxWidth().padding(start = 12.dp),
                                      states = states,
                                      icon = Icons.Black.queue,
                                      onClick = {
                                          states.screen.value = Screen.Library
+                                         states.currentPlaylistIndex.value = index
                                      }) {
                             SingleLineText(playlist.name)
                         }

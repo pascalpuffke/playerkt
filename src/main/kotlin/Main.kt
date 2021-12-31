@@ -166,7 +166,8 @@ fun main() = application {
                         theme = remember { mutableStateOf(Themes.default) },
                         screen = remember { mutableStateOf(Screens.default) },
                         borderStroke = remember { mutableStateOf(BorderStroke(0.dp, Color.Transparent)) },
-                        songPosition = remember { mutableStateOf(0) })
+                        songPosition = remember { mutableStateOf(0) },
+                        currentPlaylistIndex = remember { mutableStateOf(null) })
 
     remember {
         readFiles(states)
